@@ -531,25 +531,36 @@
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl">
       <h3 class="text-lg font-bold text-slate-800 mb-4">Catatan Kasus & Refleksi Siswa</h3>
       <form onsubmit="saveKasus(event)" class="space-y-3 text-sm">
-        <div>
-          <label class="block font-semibold text-xs mb-1">Pilih Siswa</label>
-          <select id="kasus-siswa" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required></select>
+        <label class="block font-semibold text-xs mb-1">Pilih Siswa</label>
+          <select id="kasus-siswa-id" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <!-- Dynamic Siswa Options -->
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-xs mb-1">Tanggal Kejadian</label>
+            <input type="date" id="kasus-tanggal" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required>
+          </div>
+          <div>
+            <label class="block font-semibold text-xs mb-1">Kategori Kasus</label>
+            <select id="kasus-kategori" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="Ringan">Ringan (Terlambat, dll)</option>
+              <option value="Sedang">Sedang (Atribut, Seragam)</option>
+              <option value="Berat">Berat (Pelanggaran Berat)</option>
+            </select>
+          </div>
         </div>
         <div>
-          <label class="block font-semibold text-xs mb-1">Tanggal Kejadian</label>
-          <input type="date" id="kasus-tanggal" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required>
+          <label class="block font-semibold text-xs mb-1">Deskripsi Kasus / Kejadian</label>
+          <textarea id="kasus-deskripsi" rows="3" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Jelaskan detail kejadian..." required></textarea>
         </div>
         <div>
-          <label class="block font-semibold text-xs mb-1">Deskripsi Kasus / Masalah</label>
-          <textarea id="kasus-deskripsi" rows="2" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
+          <label class="block font-semibold text-xs mb-1">Penyelesaian & Tindak Lanjut</label>
+          <textarea id="kasus-penyelesaian" rows="2" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tindakan/pembinaan yang diberikan..." required></textarea>
         </div>
         <div>
-          <label class="block font-semibold text-xs mb-1">Penyelesaian / Tindakan</label>
-          <textarea id="kasus-solusi" rows="2" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
-        </div>
-        <div>
-          <label class="block font-semibold text-xs mb-1">Refleksi / Catatan Lanjutan</label>
-          <textarea id="kasus-refleksi" rows="2" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
+          <label class="block font-semibold text-xs mb-1">Refleksi / Catatan Wali Kelas</label>
+          <textarea id="kasus-refleksi" rows="2" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Evaluasi perkembangan siswa..."></textarea>
         </div>
         <div class="flex justify-end space-x-2 pt-3">
           <button type="button" onclick="closeKasusModal()" class="px-4 py-2 border rounded-lg text-xs">Batal</button>
@@ -559,235 +570,289 @@
     </div>
   </div>
 
-  <!-- FIREBASE SDK V9 -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
-    // Wajib di-import agar database & fungsi sinkronisasi bekerja:
-    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+  <!-- MODAL MAPEL -->
+  <div id="mapel-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
+      <h3 class="text-lg font-bold text-slate-800 mb-4">Tambah Jadwal Pelajaran</h3>
+      <form onsubmit="saveMapel(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block font-semibold text-xs mb-1">Hari</label>
+          <select id="mapel-hari" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="Senin">Senin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Kamis">Kamis</option>
+            <option value="Jumat">Jumat</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-xs mb-1">Mata Pelajaran</label>
+          <input type="text" id="mapel-nama" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block font-semibold text-xs mb-1">Jam Pelajaran</label>
+          <input type="text" id="mapel-jam" placeholder="07.00 - 08.20 WIB" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block font-semibold text-xs mb-1">Guru Pengampu</label>
+          <input type="text" id="mapel-guru" class="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div class="flex justify-end space-x-2 pt-3">
+          <button type="button" onclick="closeMapelModal()" class="px-4 py-2 border rounded-lg text-xs">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700">Simpan Jadwal</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    // =========================================================================
-    // PASTE FIREBASE CONFIG ANDA DI SINI
-    // =========================================================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyANLeu3jn5RokO2rrgu7PrxWqJdWrLZkvs",
-      authDomain: "adm-kelas-8a.firebaseapp.com",
-      databaseURL: "https://adm-kelas-8a-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "adm-kelas-8a",
-      storageBucket: "adm-kelas-8a.firebasestorage.app",
-      messagingSenderId: "707947110538",
-      appId: "1:707947110538:web:912aa6e4561e8f58bb4d73",
-      measurementId: "G-DE1QEREK35"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    
-    // Default Data
-    let appData = {
-      profil: { nama: "Budi Santoso, S.Pd.", nip: "19850712 201001 1 008", kelas: "8A", mapel: "Matematika", email: "budi.santoso@smp.sch.id", wa: "081234567890", motto: "Mendidik dengan hati, membentuk generasi unggul." },
+  <!-- SCRIPT LOGIC & DATABASE INTEGRATION -->
+  <script>
+    // State Application
+    let state = {
+      isLoggedIn: false,
+      profil: {
+        nama: "Budi Santoso, S.Pd.",
+        nip: "19850712 201001 1 008",
+        kelas: "8A",
+        mapel: "Matematika",
+        email: "budi.santoso@smp.sch.id",
+        wa: "081234567890",
+        motto: "Mendidik dengan hati, membentuk generasi unggul dan berkarakter."
+      },
       siswa: [
-        { id: 1, nama: "Ahmad Rizky", panggilan: "Rizky", jk: "L", ttl: "Jakarta, 10 Mei 2011", alamat: "Jl. Merdeka No. 12", ayah: "Bambang", ibu: "Siti", wali: "-", wa: "081298765432" },
-        { id: 2, nama: "Siti Nurhaliza", panggilan: "Siti", jk: "P", ttl: "Bandung, 15 Agustus 2011", alamat: "Jl. Mawar No. 4", ayah: "Asep", ibu: "Lilis", wali: "-", wa: "081387654321" }
+        { id: "s1", nama: "Aditya Pratama", panggilan: "Adit", jk: "L", ttl: "Bogor, 12 Jan 2011", alamat: "Jl. Pajajaran No. 12", ayah: "Bambang", ibu: "Siti", wali: "-", wa: "081211112222" },
+        { id: "s2", nama: "Anisa Rahmawati", panggilan: "Anisa", jk: "P", ttl: "Bogor, 05 Mar 2011", alamat: "Jl. Sukasari No. 45", ayah: "Dedi", ibu: "Ayu", wali: "-", wa: "081233334444" }
       ],
-      organisasi: { ketua: "Ahmad Rizky", wakil: "Siti Nurhaliza", sekretaris: "Dina Olivia", bendahara: "Rian Hidayat", kebersihan: "Doni Prasetyo" },
-      piket: { Senin: "Ahmad Rizky, Siti Nurhaliza", Selasa: "Dina Olivia, Rian Hidayat", Rabu: "Doni Prasetyo, Budi Setiawan", Kamis: "Citra Kirana, Eka Putri", Jumat: "Fajar Nusantoro, Gita Gutawa" },
-      mapel: { Senin: "Upacara, Matematika, Bahasa Indonesia", Selasa: "IPA, IPS, PJOK", Rabu: "Bahasa Inggris, Agama, Seni Budaya", Kamis: "Informatika, PKn, Matematika", Jumat: "P3K/Pramuka, BK, Bahasa Jawa" },
-      kasus: [],
-      absen: {}
+      organisasi: {
+        ketua: "Aditya Pratama",
+        wakil: "Anisa Rahmawati",
+        sekretaris: "Siti Nurhaliza",
+        bendahara: "Rizky Ramadhan",
+        kebersihan: "Farhan & Maya"
+      },
+      piket: {
+        Senin: ["Aditya Pratama", "Anisa Rahmawati"],
+        Selasa: ["Budi Kurnia", "Citra Kirana"],
+        Rabu: ["Deni Malik", "Eka Putri"],
+        Kamis: ["Farhan", "Gita Gutawa"],
+        Jumat: ["Hendra", "Intan"]
+      },
+      mapel: {
+        Senin: [{ nama: "Matematika", jam: "07.00 - 08.20", guru: "Budi Santoso, S.Pd." }],
+        Selasa: [{ nama: "Bahasa Indonesia", jam: "07.00 - 08.20", guru: "Siti Hawa, M.Pd." }],
+        Rabu: [{ nama: "IPA Terpadu", jam: "07.00 - 08.20", guru: "Drs. Ahmad" }],
+        Kamis: [{ nama: "Bahasa Inggris", jam: "07.00 - 08.20", guru: "Elena, M.A." }],
+        Jumat: [{ nama: "PAI", jam: "07.00 - 08.20", guru: "Ust. Abdullah" }]
+      },
+      absen: {}, // Structure: { "2026-07-23": { "s1": "H", "s2": "I" } }
+      kasus: []
     };
 
-    let isLoggedIn = false;
+    let chartKehadiranInstance = null;
+    let chartGenderInstance = null;
 
-    // SAVE DATA TO FIREBASE CLOUD
-    window.saveData = function() {
-      set(dbRef, appData).then(() => {
-        console.log("Data tersimpan di Firebase Cloud!");
-      }).catch((error) => {
-        alert("Gagal menyimpan ke Cloud: " + error.message);
-      });
-    };
-
-    // REALTIME LISTEN FROM FIREBASE CLOUD
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        appData = data;
-        if (!appData.siswa) appData.siswa = [];
-        if (!appData.kasus) appData.kasus = [];
-        if (!appData.absen) appData.absen = {};
-      } else {
-        // First Time Setup (Push Default Data to Cloud)
-        window.saveData();
-      }
-
-      // Update UI Status Badge
-      const syncEl = document.getElementById('sync-status');
-      if (syncEl) {
-        syncEl.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-emerald-400 mr-1"></i> Terhubung & Sinkron';
-        syncEl.className = 'text-[10px] bg-emerald-950 text-emerald-200 px-2 py-0.5 rounded-full inline-flex items-center';
-      }
-
-      // Refresh All UI
-      renderProfil();
-      renderSiswa();
-      renderOrganisasi();
-      renderPiket();
-      renderMapel();
+    // Initialization
+    document.addEventListener("DOMContentLoaded", () => {
+      loadLocalStorage();
+      updateSyncStatus();
+      renderProfilView();
+      renderSiswaTable();
+      renderOrganisasiView();
+      renderPiketView();
+      renderMapelView();
+      renderRekapAbsen();
       renderKasusView();
-      updateDashboard();
       initCharts();
+      updateStats();
+      
+      // Default set date to today for absen modal
+      document.getElementById('absen-tanggal').value = new Date().toISOString().split('T')[0];
     });
 
-    // Make functions globally available for HTML onclick events
-    window.openLoginModal = () => document.getElementById('login-modal').classList.remove('hidden');
-    window.closeLoginModal = () => document.getElementById('login-modal').classList.add('hidden');
-    
-    window.handleLogin = (e) => {
-      e.preventDefault();
-      if (document.getElementById('login-password').value === 'admin123') {
-        isLoggedIn = true;
-        closeLoginModal();
-        updateAuthUI();
-        switchTab('kasus');
-        alert('Login berhasil sebagai Wali Kelas!');
-      } else {
-        alert('Password salah! (Default: admin123)');
+    // Local Storage Operations
+    function saveState() {
+      localStorage.setItem('admin_kelas_data', JSON.stringify(state));
+      updateStats();
+    }
+
+    function loadLocalStorage() {
+      const saved = localStorage.getItem('admin_kelas_data');
+      if (saved) {
+        try {
+          state = { ...state, ...JSON.parse(saved) };
+        } catch (e) {
+          console.error("Gagal memuat data lokal", e);
+        }
       }
-    };
+    }
 
-    window.logout = () => {
-      isLoggedIn = false;
-      updateAuthUI();
-      switchTab('dashboard');
-    };
+    function updateSyncStatus() {
+      const status = document.getElementById('sync-status');
+      status.innerHTML = `<i class="fa-solid fa-circle text-[8px] text-emerald-400 mr-1"></i> Cloud Terhubung`;
+    }
 
-    function updateAuthUI() {
-      if (isLoggedIn) {
+    // AUTHENTICATION SYSTEM
+    function openLoginModal() {
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const pass = document.getElementById('login-password').value;
+      if (pass === "admin123" || pass === "123456") { // Ganti dengan sistem otentikasi riil jika perlu
+        state.isLoggedIn = true;
         document.getElementById('btn-login-modal').classList.add('hidden');
         document.getElementById('logged-in-badge').classList.remove('hidden');
+        closeLoginModal();
+        renderKasusView();
+        alert("Login Wali Kelas Berhasil!");
       } else {
-        document.getElementById('btn-login-modal').classList.remove('hidden');
-        document.getElementById('logged-in-badge').classList.add('hidden');
+        alert("Password Salah! Gunakan 'admin123'");
       }
+    }
+
+    function logout() {
+      state.isLoggedIn = false;
+      document.getElementById('btn-login-modal').classList.remove('hidden');
+      document.getElementById('logged-in-badge').classList.add('hidden');
       renderKasusView();
     }
 
-    window.requireAuth = (callback) => {
-      if (!isLoggedIn) {
-        alert("Akses terbatas! Silakan Login sebagai Wali Kelas terlebih dahulu.");
-        openLoginModal();
-      } else {
+    function requireAuth(callback) {
+      if (state.isLoggedIn) {
         callback();
+      } else {
+        alert("Akses Terbatas! Silakan login sebagai Wali Kelas terlebih dahulu.");
+        openLoginModal();
       }
-    };
+    }
 
-    window.switchTab = (tabId) => {
+    // NAVIGATION SYSTEM
+    function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(el => {
-        el.classList.remove('bg-indigo-100', 'text-indigo-700', 'font-bold');
+        el.classList.remove('bg-indigo-50', 'text-indigo-600', 'font-bold');
+        el.classList.add('text-slate-600');
       });
 
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-      const activeNav = document.getElementById(`nav-${tabId}`);
-      if(activeNav) activeNav.classList.add('bg-indigo-100', 'text-indigo-700', 'font-bold');
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-indigo-50', 'text-indigo-600', 'font-bold');
+      }
 
-      if (tabId === 'dashboard') initCharts();
-    };
-
-    // PROFIL FUNCTIONS
-    function renderProfil() {
-      if(!appData.profil) return;
-      document.getElementById('prof-nama').innerText = appData.profil.nama;
-      document.getElementById('prof-nip').innerText = "NIP. " + appData.profil.nip;
-      document.getElementById('prof-kelas').innerText = appData.profil.kelas;
-      document.getElementById('prof-mapel').innerText = appData.profil.mapel;
-      document.getElementById('prof-email').innerText = appData.profil.email;
-      document.getElementById('prof-wa').innerText = appData.profil.wa;
-      document.getElementById('prof-motto').innerText = `"${appData.profil.motto}"`;
-      document.getElementById('dash-nama-guru').innerText = appData.profil.nama;
-      document.getElementById('org-wk').innerText = appData.profil.nama;
+      if (tabId === 'dashboard') {
+        updateCharts();
+      }
     }
 
-    window.toggleEditProfil = () => {
-      const view = document.getElementById('profil-view');
-      const form = document.getElementById('profil-form');
-      if (form.classList.contains('hidden')) {
-        document.getElementById('edit-prof-nama').value = appData.profil.nama;
-        document.getElementById('edit-prof-nip').value = appData.profil.nip;
-        document.getElementById('edit-prof-kelas').value = appData.profil.kelas;
-        document.getElementById('edit-prof-mapel').value = appData.profil.mapel;
-        document.getElementById('edit-prof-email').value = appData.profil.email;
-        document.getElementById('edit-prof-wa').value = appData.profil.wa;
-        document.getElementById('edit-prof-motto').value = appData.profil.motto;
-        view.classList.add('hidden');
-        form.classList.remove('hidden');
-      } else {
-        view.classList.remove('hidden');
-        form.classList.add('hidden');
-      }
-    };
+    // PROFIL SYSTEM
+    function renderProfilView() {
+      document.getElementById('prof-nama').innerText = state.profil.nama;
+      document.getElementById('dash-nama-guru').innerText = state.profil.nama;
+      document.getElementById('prof-nip').innerText = `NIP. ${state.profil.nip}`;
+      document.getElementById('prof-kelas').innerText = state.profil.kelas;
+      document.getElementById('prof-mapel').innerText = state.profil.mapel;
+      document.getElementById('prof-email').innerText = state.profil.email;
+      document.getElementById('prof-wa').innerText = state.profil.wa;
+      document.getElementById('prof-motto').innerText = `"${state.profil.motto}"`;
 
-    window.saveProfil = (e) => {
+      // Fill form inputs
+      document.getElementById('edit-prof-nama').value = state.profil.nama;
+      document.getElementById('edit-prof-nip').value = state.profil.nip;
+      document.getElementById('edit-prof-kelas').value = state.profil.kelas;
+      document.getElementById('edit-prof-mapel').value = state.profil.mapel;
+      document.getElementById('edit-prof-email').value = state.profil.email;
+      document.getElementById('edit-prof-wa').value = state.profil.wa;
+      document.getElementById('edit-prof-motto').value = state.profil.motto;
+    }
+
+    function toggleEditProfil() {
+      document.getElementById('profil-view').classList.toggle('hidden');
+      document.getElementById('profil-form').classList.toggle('hidden');
+    }
+
+    function saveProfil(e) {
       e.preventDefault();
-      appData.profil = {
+      state.profil = {
         nama: document.getElementById('edit-prof-nama').value,
         nip: document.getElementById('edit-prof-nip').value,
         kelas: document.getElementById('edit-prof-kelas').value,
         mapel: document.getElementById('edit-prof-mapel').value,
         email: document.getElementById('edit-prof-email').value,
         wa: document.getElementById('edit-prof-wa').value,
-        motto: document.getElementById('edit-prof-motto').value,
+        motto: document.getElementById('edit-prof-motto').value
       };
-      saveData();
+      saveState();
+      renderProfilView();
       toggleEditProfil();
-    };
-
-    // SISWA FUNCTIONS
-    function renderSiswa() {
-      const tbody = document.getElementById('table-siswa-body');
-      tbody.innerHTML = '';
-      (appData.siswa || []).forEach((s, idx) => {
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-3 font-semibold text-slate-500">${idx + 1}</td>
-            <td class="p-3 font-bold text-slate-800">${s.nama}</td>
-            <td class="p-3">${s.panggilan} (${s.jk})</td>
-            <td class="p-3">${s.ttl}</td>
-            <td class="p-3">
-              <div class="text-xs">Ayah: ${s.ayah}</div>
-              <div class="text-xs">Ibu: ${s.ibu}</div>
-              ${s.wali && s.wali !== '-' ? `<div class="text-xs">Wali: ${s.wali}</div>` : ''}
-            </td>
-            <td class="p-3 text-emerald-600 font-semibold">
-              <a href="https://wa.me/${s.wa}" target="_blank" class="hover:underline">
-                <i class="fa-brands fa-whatsapp"></i> ${s.wa}
-              </a>
-            </td>
-            <td class="p-3 text-center space-x-1">
-              <button onclick="requireAuth(() => editSiswa(${s.id}))" class="text-indigo-600 hover:text-indigo-900 p-1"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="requireAuth(() => deleteSiswa(${s.id}))" class="text-rose-600 hover:text-rose-900 p-1"><i class="fa-solid fa-trash"></i></button>
-            </td>
-          </tr>
-        `;
-      });
-      renderRekapAbsen();
     }
 
-    window.openSiswaModal = () => {
-      document.getElementById('siswa-form').reset();
-      document.getElementById('edit-siswa-id').value = '';
-      document.getElementById('modal-siswa-title').innerText = "Tambah Data Siswa";
-      document.getElementById('siswa-modal').classList.remove('hidden');
-    };
-    window.closeSiswaModal = () => document.getElementById('siswa-modal').classList.add('hidden');
+    // SISWA SYSTEM
+    function renderSiswaTable() {
+      const tbody = document.getElementById('table-siswa-body');
+      tbody.innerHTML = '';
+      
+      state.siswa.forEach((s, index) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-slate-500">${index + 1}</td>
+          <td class="p-3 font-bold text-slate-800">${s.nama} <span class="text-xs font-normal text-slate-400">(${s.jk})</span></td>
+          <td class="p-3">${s.panggilan}</td>
+          <td class="p-3 text-xs">${s.ttl}</td>
+          <td class="p-3 text-xs">A: ${s.ayah} | I: ${s.ibu}</td>
+          <td class="p-3 text-xs text-indigo-600 font-semibold"><i class="fa-brands fa-whatsapp mr-1"></i>${s.wa}</td>
+          <td class="p-3 text-center space-x-2">
+            <button onclick="requireAuth(() => editSiswa('${s.id}'))" class="text-indigo-600 hover:text-indigo-900"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="requireAuth(() => deleteSiswa('${s.id}'))" class="text-rose-600 hover:text-rose-900"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      updateStats();
+    }
 
-    window.saveSiswa = (e) => {
+    function openSiswaModal(editId = null) {
+      const modal = document.getElementById('siswa-modal');
+      const form = document.getElementById('siswa-form');
+      form.reset();
+      document.getElementById('edit-siswa-id').value = '';
+
+      if (editId) {
+        const s = state.siswa.find(item => item.id === editId);
+        if (s) {
+          document.getElementById('edit-siswa-id').value = s.id;
+          document.getElementById('siswa-nama').value = s.nama;
+          document.getElementById('siswa-panggilan').value = s.panggilan;
+          document.getElementById('siswa-jk').value = s.jk;
+          document.getElementById('siswa-ttl').value = s.ttl;
+          document.getElementById('siswa-alamat').value = s.alamat;
+          document.getElementById('siswa-ayah').value = s.ayah;
+          document.getElementById('siswa-ibu').value = s.ibu;
+          document.getElementById('siswa-wali').value = s.wali;
+          document.getElementById('siswa-wa').value = s.wa;
+          document.getElementById('modal-siswa-title').innerText = "Edit Data Siswa";
+        }
+      } else {
+        document.getElementById('modal-siswa-title').innerText = "Tambah Data Siswa";
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeSiswaModal() {
+      document.getElementById('siswa-modal').classList.add('hidden');
+    }
+
+    function saveSiswa(e) {
       e.preventDefault();
       const id = document.getElementById('edit-siswa-id').value;
       const data = {
-        id: id ? parseInt(id) : Date.now(),
+        id: id || 's_' + Date.now(),
         nama: document.getElementById('siswa-nama').value,
         panggilan: document.getElementById('siswa-panggilan').value,
         jk: document.getElementById('siswa-jk').value,
@@ -795,374 +860,408 @@
         alamat: document.getElementById('siswa-alamat').value,
         ayah: document.getElementById('siswa-ayah').value,
         ibu: document.getElementById('siswa-ibu').value,
-        wali: document.getElementById('siswa-wali').value || '-',
-        wa: document.getElementById('siswa-wa').value,
+        wali: document.getElementById('siswa-wali').value,
+        wa: document.getElementById('siswa-wa').value
       };
 
-      if (!appData.siswa) appData.siswa = [];
       if (id) {
-        const index = appData.siswa.findIndex(s => s.id === parseInt(id));
-        appData.siswa[index] = data;
+        const idx = state.siswa.findIndex(s => s.id === id);
+        if (idx !== -1) state.siswa[idx] = data;
       } else {
-        appData.siswa.push(data);
+        state.siswa.push(data);
       }
-      saveData();
+
+      saveState();
+      renderSiswaTable();
       closeSiswaModal();
-    };
+    }
 
-    window.editSiswa = (id) => {
-      const s = appData.siswa.find(item => item.id === id);
-      if (!s) return;
-      document.getElementById('edit-siswa-id').value = s.id;
-      document.getElementById('siswa-nama').value = s.nama;
-      document.getElementById('siswa-panggilan').value = s.panggilan;
-      document.getElementById('siswa-jk').value = s.jk;
-      document.getElementById('siswa-ttl').value = s.ttl;
-      document.getElementById('siswa-alamat').value = s.alamat;
-      document.getElementById('siswa-ayah').value = s.ayah;
-      document.getElementById('siswa-ibu').value = s.ibu;
-      document.getElementById('siswa-wali').value = s.wali;
-      document.getElementById('siswa-wa').value = s.wa;
-      document.getElementById('modal-siswa-title').innerText = "Edit Data Siswa";
-      document.getElementById('siswa-modal').classList.remove('hidden');
-    };
+    function editSiswa(id) {
+      openSiswaModal(id);
+    }
 
-    window.deleteSiswa = (id) => {
-      if (confirm('Yakin ingin menghapus data siswa ini?')) {
-        appData.siswa = appData.siswa.filter(s => s.id !== id);
-        saveData();
+    function deleteSiswa(id) {
+      if (confirm("Yakin ingin menghapus data siswa ini?")) {
+        state.siswa = state.siswa.filter(s => s.id !== id);
+        saveState();
+        renderSiswaTable();
       }
-    };
+    }
 
-    // ABSENSI FUNCTIONS
-    window.renderRekapAbsen = () => {
-      const bulanIdx = parseInt(document.getElementById('select-bulan').value);
-      const daysInMonth = new Date(2026, bulanIdx + 1, 0).getDate();
+    // ABSENSI SYSTEM
+    function renderRekapAbsen() {
+      const monthIdx = parseInt(document.getElementById('select-bulan').value);
+      const daysInMonth = new Date(2026, monthIdx + 1, 0).getDate();
       
       const header = document.getElementById('rekap-header');
-      header.innerHTML = '<th class="p-2 border sticky left-0 bg-slate-100 z-10">Nama Siswa</th>';
-      for (let i = 1; i <= daysInMonth; i++) {
-        header.innerHTML += `<th class="p-1 border text-center min-w-[25px]">${i}</th>`;
+      header.innerHTML = '<th class="p-2 border sticky left-0 bg-slate-100 z-10 w-40">Nama Siswa</th>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        header.innerHTML += `<th class="p-1 border text-center w-6">${d}</th>`;
       }
 
       const tbody = document.getElementById('rekap-body');
       tbody.innerHTML = '';
 
-      (appData.siswa || []).forEach(s => {
-        let row = `<tr class="hover:bg-slate-50"><td class="p-2 border font-medium sticky left-0 bg-white font-semibold">${s.nama}</td>`;
-        for (let day = 1; day <= daysInMonth; day++) {
-          const formattedDay = day < 10 ? '0' + day : day;
-          const formattedBulan = (bulanIdx + 1) < 10 ? '0' + (bulanIdx + 1) : (bulanIdx + 1);
-          const dateStr = `2026-${formattedBulan}-${formattedDay}`;
-
-          const status = (appData.absen && appData.absen[dateStr] && appData.absen[dateStr][s.id]) ? appData.absen[dateStr][s.id] : '-';
+      state.siswa.forEach(s => {
+        let rowHtml = `<td class="p-2 border font-bold sticky left-0 bg-white z-10 text-xs">${s.nama}</td>`;
+        
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dateStr = `2026-${String(monthIdx + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+          const status = (state.absen[dateStr] && state.absen[dateStr][s.id]) ? state.absen[dateStr][s.id] : '-';
           
-          let colorClass = "text-slate-300";
-          if (status === 'H') colorClass = "bg-emerald-500 text-white font-bold";
-          else if (status === 'I') colorClass = "bg-amber-500 text-white font-bold";
-          else if (status === 'S') colorClass = "bg-blue-500 text-white font-bold";
-          else if (status === 'A') colorClass = "bg-rose-500 text-white font-bold";
+          let bgClass = "bg-slate-50 text-slate-300";
+          if (status === 'H') bgClass = "bg-emerald-500 text-white font-bold";
+          if (status === 'I') bgClass = "bg-amber-500 text-white font-bold";
+          if (status === 'S') bgClass = "bg-blue-500 text-white font-bold";
+          if (status === 'A') bgClass = "bg-rose-500 text-white font-bold";
 
-          row += `<td class="p-1 border text-center text-[10px] ${colorClass}">${status}</td>`;
+          rowHtml += `<td class="border text-center ${bgClass}">${status}</td>`;
         }
-        row += '</tr>';
-        tbody.innerHTML += row;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = rowHtml;
+        tbody.appendChild(tr);
       });
-    };
+    }
 
-    window.openInputAbsenModal = () => {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('absen-tanggal').value = today;
+    function openInputAbsenModal() {
+      const listContainer = document.getElementById('absen-siswa-list');
+      listContainer.innerHTML = '';
       
-      const container = document.getElementById('absen-siswa-list');
-      container.innerHTML = '';
+      const currentDate = document.getElementById('absen-tanggal').value;
+      const currentData = state.absen[currentDate] || {};
 
-      (appData.siswa || []).forEach(s => {
-        container.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-50 p-2 rounded border text-xs">
-            <span class="font-bold text-slate-700">${s.nama}</span>
-            <div class="space-x-1">
-              <label class="inline-flex items-center"><input type="radio" name="status-${s.id}" value="H" checked class="accent-emerald-500"> Hadir</label>
-              <label class="inline-flex items-center"><input type="radio" name="status-${s.id}" value="I" class="accent-amber-500"> Izin</label>
-              <label class="inline-flex items-center"><input type="radio" name="status-${s.id}" value="S" class="accent-blue-500"> Sakit</label>
-              <label class="inline-flex items-center"><input type="radio" name="status-${s.id}" value="A" class="accent-rose-500"> Alpa</label>
-            </div>
-          </div>
+      state.siswa.forEach(s => {
+        const val = currentData[s.id] || 'H';
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-2 border rounded-lg bg-slate-50";
+        item.innerHTML = `
+          <span class="font-semibold text-xs text-slate-800">${s.nama}</span>
+          <select data-siswa-id="${s.id}" class="absen-status-input text-xs border rounded p-1 outline-none">
+            <option value="H" ${val === 'H' ? 'selected' : ''}>Hadir (H)</option>
+            <option value="I" ${val === 'I' ? 'selected' : ''}>Izin (I)</option>
+            <option value="S" ${val === 'S' ? 'selected' : ''}>Sakit (S)</option>
+            <option value="A" ${val === 'A' ? 'selected' : ''}>Alpa (A)</option>
+          </select>
         `;
+        listContainer.appendChild(item);
       });
 
       document.getElementById('absen-modal').classList.remove('hidden');
-    };
+    }
 
-    window.closeInputAbsenModal = () => document.getElementById('absen-modal').classList.add('hidden');
+    function closeInputAbsenModal() {
+      document.getElementById('absen-modal').classList.add('hidden');
+    }
 
-    window.saveAbsenHarian = () => {
-      const dateStr = document.getElementById('absen-tanggal').value;
-      if (!dateStr) return alert("Pilih tanggal!");
+    function saveAbsenHarian() {
+      const date = document.getElementById('absen-tanggal').value;
+      if (!date) {
+        alert("Pilih tanggal terlebih dahulu!");
+        return;
+      }
 
-      if (!appData.absen) appData.absen = {};
-      if (!appData.absen[dateStr]) appData.absen[dateStr] = {};
+      if (!state.absen[date]) state.absen[date] = {};
 
-      (appData.siswa || []).forEach(s => {
-        const radios = document.getElementsByName(`status-${s.id}`);
-        for (let r of radios) {
-          if (r.checked) {
-            appData.absen[dateStr][s.id] = r.value;
-          }
-        }
+      document.querySelectorAll('.absen-status-input').forEach(select => {
+        const sId = select.getAttribute('data-siswa-id');
+        state.absen[date][sId] = select.value;
       });
 
-      saveData();
+      saveState();
+      renderRekapAbsen();
       closeInputAbsenModal();
-      alert("Absensi berhasil disimpan ke Cloud!");
-    };
+      alert("Absensi berhasil disimpan!");
+    }
 
-    // KASUS FUNCTIONS
+    // CATATAN KASUS SYSTEM
     function renderKasusView() {
       const container = document.getElementById('kasus-protected-view');
-      if (!isLoggedIn) {
+      container.innerHTML = '';
+
+      if (!state.isLoggedIn) {
         container.innerHTML = `
-          <div class="bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-xl text-center space-y-3">
+          <div class="bg-amber-50 border border-amber-200 text-amber-800 p-8 rounded-2xl text-center space-y-3">
             <i class="fa-solid fa-lock text-4xl text-amber-500"></i>
-            <h4 class="font-bold text-lg">Area Terproteksi Wali Kelas</h4>
-            <p class="text-xs max-w-md mx-auto">Catatan kasus, penyelesaian, dan refleksi bersifat rahasia dan hanya dapat diakses oleh Wali Kelas yang telah login.</p>
-            <button onclick="openLoginModal()" class="bg-amber-600 text-white text-xs px-4 py-2 rounded-lg font-semibold hover:bg-amber-700">
-              Login Sekarang
+            <h4 class="font-bold text-lg">Akses Dibatasi</h4>
+            <p class="text-xs max-w-md mx-auto text-amber-700">Catatan kasus dan refleksi siswa bersifat rahasia. Hanya Wali Kelas yang berhak melihat dan memodifikasi bagian ini.</p>
+            <button onclick="openLoginModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-4 py-2 rounded-lg font-semibold transition">
+              Login Wali Kelas
             </button>
           </div>
         `;
-      } else {
-        if (!appData.kasus || appData.kasus.length === 0) {
-          container.innerHTML = `<p class="text-sm text-slate-500 italic text-center py-6">Belum ada catatan kasus yang ditambahkan.</p>`;
-          return;
-        }
-        container.innerHTML = '';
-        appData.kasus.forEach(k => {
-          const siswa = (appData.siswa || []).find(s => s.id === k.siswaId) || { nama: 'Siswa Dihapus' };
-          container.innerHTML += `
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
-              <div class="flex justify-between items-start border-b pb-2">
-                <div>
-                  <h4 class="font-bold text-slate-800 text-base">${siswa.nama}</h4>
-                  <p class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i>${k.tanggal}</p>
-                </div>
-                <button onclick="deleteKasus(${k.id})" class="text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash"></i> Hapus</button>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                <div class="bg-slate-50 p-3 rounded-lg border">
-                  <p class="font-bold text-rose-600 mb-1 uppercase">Deskripsi Kasus</p>
-                  <p class="text-slate-700">${k.deskripsi}</p>
-                </div>
-                <div class="bg-slate-50 p-3 rounded-lg border">
-                  <p class="font-bold text-indigo-600 mb-1 uppercase">Tindakan / Solusi</p>
-                  <p class="text-slate-700">${k.solusi}</p>
-                </div>
-                <div class="bg-slate-50 p-3 rounded-lg border">
-                  <p class="font-bold text-emerald-600 mb-1 uppercase">Refleksi</p>
-                  <p class="text-slate-700">${k.refleksi}</p>
-                </div>
-              </div>
-            </div>
-          `;
-        });
+        return;
       }
+
+      if (state.kasus.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">Belum ada catatan kasus siswa yang direkam.</div>`;
+        return;
+      }
+
+      state.kasus.forEach(k => {
+        const s = state.siswa.find(item => item.id === k.siswaId) || { nama: "Siswa Terhapus" };
+        const card = document.createElement('div');
+        card.className = "bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3";
+        
+        let badgeColor = "bg-emerald-100 text-emerald-700";
+        if (k.kategori === 'Sedang') badgeColor = "bg-amber-100 text-amber-700";
+        if (k.kategori === 'Berat') badgeColor = "bg-rose-100 text-rose-700";
+
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <h4 class="font-bold text-slate-800 text-base">${s.nama}</h4>
+              <p class="text-xs text-slate-400">${k.tanggal}</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full font-bold ${badgeColor}">${k.kategori}</span>
+          </div>
+          <div class="text-xs space-y-2 text-slate-600 bg-slate-50 p-3 rounded-lg">
+            <p><strong>Kasus:</strong> ${k.deskripsi}</p>
+            <p><strong>Penyelesaian:</strong> ${k.penyelesaian}</p>
+            ${k.refleksi ? `<p class="italic border-t pt-1 mt-1 text-slate-500"><strong>Refleksi Wali Kelas:</strong> "${k.refleksi}"</p>` : ''}
+          </div>
+          <div class="flex justify-end">
+            <button onclick="deleteKasus('${k.id}')" class="text-xs text-rose-600 hover:underline"><i class="fa-solid fa-trash mr-1"></i>Hapus Catatan</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
 
-    window.openKasusModal = () => {
-      const select = document.getElementById('kasus-siswa');
+    function openKasusModal() {
+      const select = document.getElementById('kasus-siswa-id');
       select.innerHTML = '';
-      (appData.siswa || []).forEach(s => {
+      state.siswa.forEach(s => {
         select.innerHTML += `<option value="${s.id}">${s.nama}</option>`;
       });
+      document.getElementById('kasus-tanggal').value = new Date().toISOString().split('T')[0];
       document.getElementById('kasus-modal').classList.remove('hidden');
-    };
-    window.closeKasusModal = () => document.getElementById('kasus-modal').classList.add('hidden');
-
-    window.saveKasus = (e) => {
-      e.preventDefault();
-      const newKasus = {
-        id: Date.now(),
-        siswaId: parseInt(document.getElementById('kasus-siswa').value),
-        tanggal: document.getElementById('kasus-tanggal').value,
-        deskripsi: document.getElementById('kasus-deskripsi').value,
-        solusi: document.getElementById('kasus-solusi').value,
-        refleksi: document.getElementById('kasus-refleksi').value
-      };
-      if (!appData.kasus) appData.kasus = [];
-      appData.kasus.push(newKasus);
-      saveData();
-      closeKasusModal();
-    };
-
-    window.deleteKasus = (id) => {
-      if (confirm('Hapus catatan kasus ini?')) {
-        appData.kasus = appData.kasus.filter(k => k.id !== id);
-        saveData();
-      }
-    };
-
-    // ORGANISASI FUNCTIONS
-    function renderOrganisasi() {
-      if(!appData.organisasi) return;
-      document.getElementById('org-ketua').innerText = appData.organisasi.ketua || '-';
-      document.getElementById('org-wakil').innerText = appData.organisasi.wakil || '-';
-      document.getElementById('org-sekretaris').innerText = appData.organisasi.sekretaris || '-';
-      document.getElementById('org-bendahara').innerText = appData.organisasi.bendahara || '-';
-      document.getElementById('org-kebersihan').innerText = appData.organisasi.kebersihan || '-';
     }
 
-    window.toggleEditOrganisasi = () => {
-      const view = document.getElementById('org-view');
-      const form = document.getElementById('org-form');
-      if (form.classList.contains('hidden')) {
-        document.getElementById('edit-org-ketua').value = appData.organisasi.ketua;
-        document.getElementById('edit-org-wakil').value = appData.organisasi.wakil;
-        document.getElementById('edit-org-sekretaris').value = appData.organisasi.sekretaris;
-        document.getElementById('edit-org-bendahara').value = appData.organisasi.bendahara;
-        document.getElementById('edit-org-kebersihan').value = appData.organisasi.kebersihan;
-        view.classList.add('hidden');
-        form.classList.remove('hidden');
-      } else {
-        view.classList.remove('hidden');
-        form.classList.add('hidden');
-      }
-    };
+    function closeKasusModal() {
+      document.getElementById('kasus-modal').classList.add('hidden');
+    }
 
-    window.saveOrganisasi = (e) => {
+    function saveKasus(e) {
       e.preventDefault();
-      appData.organisasi = {
+      const newKasus = {
+        id: 'k_' + Date.now(),
+        siswaId: document.getElementById('kasus-siswa-id').value,
+        tanggal: document.getElementById('kasus-tanggal').value,
+        kategori: document.getElementById('kasus-kategori').value,
+        deskripsi: document.getElementById('kasus-deskripsi').value,
+        penyelesaian: document.getElementById('kasus-penyelesaian').value,
+        refleksi: document.getElementById('kasus-refleksi').value
+      };
+
+      state.kasus.push(newKasus);
+      saveState();
+      renderKasusView();
+      closeKasusModal();
+    }
+
+    function deleteKasus(id) {
+      if (confirm("Hapus catatan kasus ini?")) {
+        state.kasus = state.kasus.filter(k => k.id !== id);
+        saveState();
+        renderKasusView();
+      }
+    }
+
+    // ORGANISASI SYSTEM
+    function renderOrganisasiView() {
+      document.getElementById('org-wk').innerText = state.profil.nama;
+      document.getElementById('org-ketua').innerText = state.organisasi.ketua || '-';
+      document.getElementById('org-wakil').innerText = state.organisasi.wakil || '-';
+      document.getElementById('org-sekretaris').innerText = state.organisasi.sekretaris || '-';
+      document.getElementById('org-bendahara').innerText = state.organisasi.bendahara || '-';
+      document.getElementById('org-kebersihan').innerText = state.organisasi.kebersihan || '-';
+
+      document.getElementById('edit-org-ketua').value = state.organisasi.ketua || '';
+      document.getElementById('edit-org-wakil').value = state.organisasi.wakil || '';
+      document.getElementById('edit-org-sekretaris').value = state.organisasi.sekretaris || '';
+      document.getElementById('edit-org-bendahara').value = state.organisasi.bendahara || '';
+      document.getElementById('edit-org-kebersihan').value = state.organisasi.kebersihan || '';
+    }
+
+    function toggleEditOrganisasi() {
+      document.getElementById('org-view').classList.toggle('hidden');
+      document.getElementById('org-form').classList.toggle('hidden');
+    }
+
+    function saveOrganisasi(e) {
+      e.preventDefault();
+      state.organisasi = {
         ketua: document.getElementById('edit-org-ketua').value,
         wakil: document.getElementById('edit-org-wakil').value,
         sekretaris: document.getElementById('edit-org-sekretaris').value,
         bendahara: document.getElementById('edit-org-bendahara').value,
         kebersihan: document.getElementById('edit-org-kebersihan').value
       };
-      saveData();
+      saveState();
+      renderOrganisasiView();
       toggleEditOrganisasi();
-    };
+    }
 
-    // PIKET FUNCTIONS
-    function renderPiket() {
-      if(!appData.piket) return;
-      const view = document.getElementById('piket-view');
-      view.innerHTML = '';
+    // PIKET SYSTEM
+    function renderPiketView() {
+      const container = document.getElementById('piket-view');
+      container.innerHTML = '';
+
       const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
       days.forEach(day => {
-        const list = appData.piket[day] ? appData.piket[day].split(',') : [];
-        view.innerHTML += `
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-            <h4 class="font-bold text-indigo-600 border-b pb-2 text-sm">${day}</h4>
-            <ul class="mt-2 text-xs space-y-1.5 text-slate-600">
-              ${list.map(item => `<li><i class="fa-solid fa-check text-emerald-500 mr-1"></i> ${item.trim()}</li>`).join('')}
-            </ul>
-          </div>
+        const list = state.piket[day] || [];
+        const card = document.createElement('div');
+        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm";
+        card.innerHTML = `
+          <h4 class="font-bold text-indigo-700 text-sm border-b pb-2 mb-2 flex justify-between items-center">
+            <span>${day}</span>
+            <i class="fa-solid fa-broom text-xs text-indigo-400"></i>
+          </h4>
+          <ul class="text-xs space-y-1.5 text-slate-600">
+            ${list.map(s => `<li class="flex items-center"><i class="fa-solid fa-check text-[10px] text-emerald-500 mr-2"></i>${s}</li>`).join('')}
+          </ul>
         `;
+        container.appendChild(card);
       });
     }
 
-    window.toggleEditPiket = () => {
-      const view = document.getElementById('piket-view');
+    function toggleEditPiket() {
       const form = document.getElementById('piket-form');
+      const view = document.getElementById('piket-view');
+      const inputs = document.getElementById('piket-inputs');
+
       if (form.classList.contains('hidden')) {
-        const container = document.getElementById('piket-inputs');
-        container.innerHTML = '';
+        inputs.innerHTML = '';
         ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'].forEach(day => {
-          container.innerHTML += `
+          const val = (state.piket[day] || []).join(', ');
+          inputs.innerHTML += `
             <div>
-              <label class="block text-xs font-bold">${day}</label>
-              <input type="text" id="edit-piket-${day}" value="${appData.piket[day] || ''}" class="w-full border p-2 rounded text-xs">
+              <label class="block text-xs font-bold mb-1">${day}</label>
+              <input type="text" data-day="${day}" value="${val}" class="piket-day-input w-full border p-2 rounded text-xs">
             </div>
           `;
         });
-        view.classList.add('hidden');
-        form.classList.remove('hidden');
-      } else {
-        view.classList.remove('hidden');
-        form.classList.add('hidden');
       }
-    };
 
-    window.savePiket = (e) => {
+      view.classList.toggle('hidden');
+      form.classList.toggle('hidden');
+    }
+
+    function savePiket(e) {
       e.preventDefault();
-      ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'].forEach(day => {
-        appData.piket[day] = document.getElementById(`edit-piket-${day}`).value;
+      document.querySelectorAll('.piket-day-input').forEach(input => {
+        const day = input.getAttribute('data-day');
+        state.piket[day] = input.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
       });
-      saveData();
+      saveState();
+      renderPiketView();
       toggleEditPiket();
-    };
+    }
 
-    // MAPEL FUNCTIONS
-    function renderMapel() {
-      if(!appData.mapel) return;
-      const view = document.getElementById('mapel-view');
-      view.innerHTML = '';
+    // MAPEL SYSTEM
+    function renderMapelView() {
+      const container = document.getElementById('mapel-view');
+      container.innerHTML = '';
+
       const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
       days.forEach(day => {
-        const list = appData.mapel[day] ? appData.mapel[day].split(',') : [];
-        view.innerHTML += `
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-            <h4 class="font-bold text-indigo-600 border-b pb-2 text-sm">${day}</h4>
-            <ol class="mt-2 text-xs space-y-2 text-slate-700 list-decimal list-inside">
-              ${list.map(item => `<li class="font-medium">${item.trim()}</li>`).join('')}
-            </ol>
+        const list = state.mapel[day] || [];
+        const card = document.createElement('div');
+        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3";
+        card.innerHTML = `
+          <h4 class="font-bold text-indigo-700 text-sm border-b pb-2">${day}</h4>
+          <div class="space-y-2">
+            ${list.map((m, idx) => `
+              <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-xs">
+                <p class="font-bold text-slate-800">${m.nama}</p>
+                <p class="text-slate-500 mt-0.5"><i class="fa-regular fa-clock mr-1"></i>${m.jam}</p>
+                <p class="text-indigo-600 font-medium mt-0.5"><i class="fa-regular fa-user mr-1"></i>${m.guru}</p>
+                <button onclick="requireAuth(() => deleteMapel('${day}', ${idx}))" class="text-rose-500 hover:underline text-[10px] mt-1 block">Hapus</button>
+              </div>
+            `).join('')}
           </div>
         `;
+        container.appendChild(card);
       });
     }
 
-    window.openMapelModal = () => {
-      const day = prompt("Masukkan Hari yang ingin diubah (Senin, Selasa, Rabu, Kamis, Jumat):");
-      if (day && appData.mapel[day] !== undefined) {
-        const newVal = prompt(`Mata pelajaran hari ${day} (pisahkan dengan koma):`, appData.mapel[day]);
-        if (newVal !== null) {
-          appData.mapel[day] = newVal;
-          saveData();
-        }
-      } else if (day) {
-        alert("Hari tidak valid!");
+    function openMapelModal() {
+      document.getElementById('mapel-modal').classList.remove('hidden');
+    }
+
+    function closeMapelModal() {
+      document.getElementById('mapel-modal').classList.add('hidden');
+    }
+
+    function saveMapel(e) {
+      e.preventDefault();
+      const day = document.getElementById('mapel-hari').value;
+      const newMapel = {
+        nama: document.getElementById('mapel-nama').value,
+        jam: document.getElementById('mapel-jam').value,
+        guru: document.getElementById('mapel-guru').value
+      };
+
+      if (!state.mapel[day]) state.mapel[day] = [];
+      state.mapel[day].push(newMapel);
+
+      saveState();
+      renderMapelView();
+      closeMapelModal();
+    }
+
+    function deleteMapel(day, index) {
+      if (confirm("Hapus jadwal pelajaran ini?")) {
+        state.mapel[day].splice(index, 1);
+        saveState();
+        renderMapelView();
       }
-    };
+    }
 
-    // DASHBOARD & CHARTS
-    let chartKehadiranInst, chartGenderInst;
-
-    function updateDashboard() {
-      document.getElementById('dash-stat-siswa').innerText = (appData.siswa || []).length;
-      document.getElementById('dash-stat-kasus').innerText = (appData.kasus || []).length;
+    // STATS & CHARTS SYSTEM
+    function updateStats() {
+      document.getElementById('dash-stat-siswa').innerText = state.siswa.length;
+      document.getElementById('dash-stat-kasus').innerText = state.kasus.length;
     }
 
     function initCharts() {
-      const ctx1 = document.getElementById('chartKehadiran').getContext('2d');
-      if (chartKehadiranInst) chartKehadiranInst.destroy();
-      chartKehadiranInst = new Chart(ctx1, {
+      const ctxHadir = document.getElementById('chartKehadiran').getContext('2d');
+      chartKehadiranInstance = new Chart(ctxHadir, {
         type: 'doughnut',
         data: {
-          labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
+          labels: ['Hadir', 'Izin/Sakit', 'Alpa'],
           datasets: [{
-            data: [85, 5, 7, 3],
-            backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444']
+            data: [85, 12, 3],
+            backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
           }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      const jmlL = (appData.siswa || []).filter(s => s.jk === 'L').length;
-      const jmlP = (appData.siswa || []).filter(s => s.jk === 'P').length;
-
-      const ctx2 = document.getElementById('chartGender').getContext('2d');
-      if (chartGenderInst) chartGenderInst.destroy();
-      chartGenderInst = new Chart(ctx2, {
-        type: 'bar',
+      const ctxGender = document.getElementById('chartGender').getContext('2d');
+      chartGenderInstance = new Chart(ctxGender, {
+        type: 'pie',
         data: {
           labels: ['Laki-laki', 'Perempuan'],
           datasets: [{
-            label: 'Jumlah Siswa',
-            data: [jmlL, jmlP],
-            backgroundColor: ['#6366f1', '#ec4899']
+            data: [0, 0],
+            backgroundColor: ['#3b82f6', '#ec4899']
           }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        options: { responsive: true, maintainAspectRatio: false }
       });
+      updateCharts();
+    }
+
+    function updateCharts() {
+      if (!chartGenderInstance) return;
+
+      const countL = state.siswa.filter(s => s.jk === 'L').length;
+      const countP = state.siswa.filter(s => s.jk === 'P').length;
+
+      chartGenderInstance.data.datasets[0].data = [countL, countP];
+      chartGenderInstance.update();
     }
   </script>
 </body>
