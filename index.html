@@ -561,8 +561,10 @@
 
   <!-- FIREBASE SDK V9 -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+    // Wajib di-import agar database & fungsi sinkronisasi bekerja:
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
     // =========================================================================
     // PASTE FIREBASE CONFIG ANDA DI SINI
@@ -581,8 +583,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
-    const dbRef = ref(db, 'administrasi_kelas');
-
+    
     // Default Data
     let appData = {
       profil: { nama: "Budi Santoso, S.Pd.", nip: "19850712 201001 1 008", kelas: "8A", mapel: "Matematika", email: "budi.santoso@smp.sch.id", wa: "081234567890", motto: "Mendidik dengan hati, membentuk generasi unggul." },
